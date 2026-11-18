@@ -214,9 +214,53 @@ $joinedFormatted = $joinedDate->format('d') . ' ' . $bulanIndo[(int) $joinedDate
             </div>
 
             <div class="flex items-center gap-3 sm:gap-5">
-                <a href="logout.php" class="text-xs sm:text-sm font-bold text-rose-600 hover:text-rose-700 underline underline-offset-4">
-                    Keluar
-                </a>
+                <div class="relative">
+                    <button
+                        type="button"
+                        id="profileDropdownButton"
+                        class="flex items-center gap-2"
+                        aria-haspopup="true"
+                        aria-expanded="false"
+                        aria-label="Buka menu profil"
+                    >
+                        <span class="w-9 h-9 rounded-full bg-[#002f34] text-[#23e5db] font-extrabold text-xs flex items-center justify-center">
+                            <?= htmlspecialchars(mb_strtoupper(mb_substr($_SESSION['user_name'] ?? 'U', 0, 1)), ENT_QUOTES, 'UTF-8') ?>
+                        </span>
+                        <i id="profileChevron" class="fa-solid fa-chevron-down text-xs text-[#002f34] transition-transform duration-200"></i>
+                    </button>
+                    <div id="profileDropdownMenu" class="hidden absolute right-0 top-full mt-2.5 w-72 bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden z-50">
+                        <div class="p-4">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-12 h-12 rounded-full bg-[#002f34] text-[#23e5db] font-extrabold text-sm flex items-center justify-center shrink-0">
+                                    <?= htmlspecialchars(mb_strtoupper(mb_substr($_SESSION['user_name'] ?? 'U', 0, 1)), ENT_QUOTES, 'UTF-8') ?>
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="font-bold text-sm text-[#002f34] truncate"><?= htmlspecialchars($_SESSION['user_name'] ?? 'Pengguna', ENT_QUOTES, 'UTF-8') ?></p>
+                                    <p class="text-xs text-gray-500 truncate"><?= htmlspecialchars($_SESSION['user_email'] ?? '', ENT_QUOTES, 'UTF-8') ?></p>
+                                </div>
+                            </div>
+                            <a href="edit-profil.php" class="bg-[#002f34] hover:bg-[#00454d] text-white font-bold text-sm py-2.5 rounded text-center block transition">
+                                Lihat dan edit profil
+                            </a>
+                        </div>
+                        <div class="border-t border-gray-100 py-1.5">
+                            <a href="iklan-saya.php" class="flex items-center gap-3 px-4 py-2.5 text-sm text-[#002f34] hover:bg-gray-50 transition">
+                                <i class="fa-regular fa-rectangle-list w-4 text-center"></i>
+                                Iklan Saya
+                            </a>
+                            <a href="pasang-iklan.php" class="flex items-center gap-3 px-4 py-2.5 text-sm text-[#002f34] hover:bg-gray-50 transition">
+                                <i class="fa-solid fa-camera w-4 text-center"></i>
+                                Pasang Iklan Baru
+                            </a>
+                        </div>
+                        <div class="border-t border-gray-100 py-1.5">
+                            <a href="logout.php" class="flex items-center gap-3 px-4 py-2.5 text-sm text-rose-600 hover:bg-rose-50 font-semibold transition">
+                                <i class="fa-solid fa-arrow-right-from-bracket w-4 text-center"></i>
+                                Keluar
+                            </a>
+                        </div>
+                    </div>
+                </div>
 
                 <a href="pasang-iklan.php" class="inline-flex items-center gap-1.5 bg-white hover:bg-gray-50 text-[#002f34] font-extrabold text-xs sm:text-sm px-4 sm:px-5 py-2 rounded-full border-4 border-t-[#23e5db] border-r-[#3a77ff] border-b-[#ffce32] border-l-[#ffce32] shadow-xs transition">
                     <i class="fa-solid fa-plus"></i>
@@ -482,5 +526,34 @@ $joinedFormatted = $joinedDate->format('d') . ' ' . $bulanIndo[(int) $joinedDate
         }
     </script>
 
+    <script>
+        (() => {
+            const profileButton = document.getElementById('profileDropdownButton');
+            const profileMenu = document.getElementById('profileDropdownMenu');
+            const profileChevron = document.getElementById('profileChevron');
+
+            if (!profileButton || !profileMenu || !profileChevron) return;
+
+            const setProfileMenuOpen = (isOpen) => {
+                profileMenu.classList.toggle('hidden', !isOpen);
+                profileChevron.classList.toggle('rotate-180', isOpen);
+                profileButton.setAttribute('aria-expanded', String(isOpen));
+            };
+
+            profileButton.addEventListener('click', () => {
+                setProfileMenuOpen(profileMenu.classList.contains('hidden'));
+            });
+
+            document.addEventListener('click', (event) => {
+                if (!profileMenu.parentElement.contains(event.target)) {
+                    setProfileMenuOpen(false);
+                }
+            });
+
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape') setProfileMenuOpen(false);
+            });
+        })();
+    </script>
 </body>
 </html>
